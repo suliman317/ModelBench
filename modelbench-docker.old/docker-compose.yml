@@ -1,0 +1,11 @@
+# docker-compose.yml
+
+services:
+  modelbench:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - huggingface-cache:/root/.cache/huggingface
