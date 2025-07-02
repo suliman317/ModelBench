@@ -1,89 +1,128 @@
-# 🧠 ModelBench – Compare the Minds
-# ModelBench API
+# 🧠 ModelBench – Compare the Simulated Mind
+# ModelBench ベンチ
 
-ModelBench is a production-ready API that allows you to send a single prompt to multiple Large Language Models (LLMs) simultaneously and get a side-by-side comparison of their responses. It also provides detailed performance and text quality analysis for each output.
+[![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/Framework-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
+[![Containerization](https://img.shields.io/badge/Container-Docker-blue.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-This tool is perfect for developers, researchers, and teams looking to evaluate and compare the performance, cost, and quality of different models for specific tasks.
+ModelBench is a high-performance API designed to benchmark and analyze responses from multiple Large Language Models (LLMs) concurrently. It provides a simple, unified endpoint to evaluate model outputs for quality, performance, and cost, making it an essential tool for developers and researchers building with AI.
 
-## ⭐ Features
+## ✨ Key Features
 
-* **Multi-LLM Comparison:** Get simultaneous responses from top models like OpenAI (GPT-4), Google (Gemini), Anthropic (Claude), and Mistral.
-* **Performance Metrics:** Automatically measures and returns latency, estimated cost, and token usage for each API call.
-* **Advanced Text Analysis:** Each model's output is automatically analyzed for:
-    * **Readability:** How easy the text is to understand.
-    * **Sentiment:** Whether the tone is positive, negative, or neutral.
-    * **Toxicity:** A score indicating the presence of harmful language.
-    * **Semantic Similarity:** How similar the outputs are to a chosen reference model.
-* **Production-Ready:** Built with FastAPI and fully containerized with Docker for easy, reliable deployment.
-* **Simple REST Endpoint:** Interact with the entire service through a single, easy-to-use `/compare` API endpoint.
+* **Concurrent API Calls**: Process requests to multiple LLMs simultaneously using an asynchronous architecture, ensuring fast, side-by-side comparisons.
+* **Comprehensive Metrics**: Go beyond just the text output. Get critical performance data including **latency**, **token usage**, and **estimated costs** for every response.
+* **In-depth Text Analysis**: Automatically score responses for crucial quality indicators:
+    * **Readability**: Flesch reading ease score.
+    * **Sentiment**: Positive, negative, or neutral tone analysis.
+    * **Toxicity**: Harmful language detection score.
+    * **Semantic Similarity**: Compare how close in meaning each response is to a chosen baseline.
+* **Enterprise-Grade & Reproducible**: Fully containerized with Docker, featuring rate limiting, structured logging, and a robust design ready for production environments.
+* **Supported Models**: Out-of-the-box support for **OpenAI (GPT-4o)**, **Google (Gemini 1.5 Pro)**, **Anthropic (Claude 3.5 Sonnet)**, and **Mistral (Large 2)**.
+
+---
+
+## 🧠 Application Logic: How It Works
+
+ModelBench follows an efficient, parallel workflow to deliver comprehensive results quickly.
+
+`Request -> [Async Fan-Out] -> [Query Models] -> [Gather Responses] -> [Async Analysis] -> [Combine Results] -> Final JSON Response`
+
+1.  **API Request Received**: The process starts with a `POST` request to the `/compare` endpoint containing your `prompt` and a list of `models`.
+2.  **Asynchronous Fan-Out**: The application calls all requested model APIs at the same time using `asyncio.gather`. This concurrent approach dramatically reduces the total wait time compared to sequential requests.
+3.  **Individual Model Queries**: For each model, the script captures its text **output**, measures **latency**, and calculates the **estimated cost** and **tokens used**. Any errors from a single model are caught gracefully without crashing the entire request.
+4.  **Advanced Text Analysis**: Once text outputs are received, the application performs another set of parallel analyses on each response. These CPU-bound tasks are run in a non-blocking thread pool (`asyncio.to_thread`) to calculate readability, sentiment, toxicity, and similarity scores.
+5.  **Final Response**: All the collected data—model output, performance stats, and analysis metrics—is aggregated into a single, clean JSON array and returned to the user.
+
+---
+
+## 🛠️ Technology Stack
+
+* **Backend**: **FastAPI** for a high-performance, asynchronous API framework.
+* **Web Server**: **Gunicorn** and **Uvicorn** for a production-ready WSGI/ASGI server setup.
+* **Containerization**: **Docker** & **Docker Compose** for building and running the application in a reproducible environment.
+* **Data Validation**: **Pydantic** for robust request and response data modeling.
+* **Text Analysis**:
+    * `transformers` for sentiment analysis.
+    * `sentence-transformers` for semantic similarity.
+    * `detoxify` for toxicity scoring.
+    * `textstat` for readability metrics.
 
 ---
 
 ## 🐋 Prerequisites: Installing Docker
 
-This entire application runs inside **Docker**. You do not need to install Python or any of the libraries on your computer yourself.
+This entire application runs inside **Docker**. You do not need to install Python or any libraries on your computer yourself.
 
-#### What is Docker?
-Think of Docker as a mini, self-contained computer for our application. It packages the app and all its dependencies (like a specific version of Python, all the required libraries, etc.) into a single "box" called a **container**. This guarantees that the application runs the same way everywhere, regardless of your local machine's setup.
-
-#### Installation
-1.  **Download Docker Desktop:** Go to the official Docker website and download the installer for your operating system.
-    * 🔗 **[https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)**
-2.  **Install the Application:** Follow the installation instructions for your operating system (Mac or Windows).
-3.  **Run Docker Desktop:** After installation, **you must start the Docker Desktop application**. You'll know it's running when you see the whale icon in your Mac's menu bar or Windows' taskbar. It must be running for the following steps to work.
+* **What is Docker?** Think of Docker as a mini, self-contained computer that packages the application and all its dependencies into a single "box" called a **container**. This guarantees that the application runs the same way everywhere.
+* **Installation**:
+    1.  Download and install Docker Desktop from the official website: 🔗 **[https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)**
+    2.  After installation, **start the Docker Desktop application**. You must see its whale icon in your menu bar or taskbar for the following steps to work.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Installation & Setup
 
-Follow these steps to get the ModelBench API running on your local machine.
-
-#### Step 1: Get the Project Files
-You can either download the project as a ZIP file or use `git` if you have it installed.
+#### Step 1: Clone the Repository
+Open your terminal and clone the official repository using `git`.
 
 ```bash
-git clone [https://github.com/suliman317/modelbench.git](https://github.com/your-username/modelbench.git)
-cd modelbench
+git clone [https://github.com/suliman317/ModelBench.git](https://github.com/suliman317/ModelBench.git)
+cd ModelBench
 ```
-*(Note: Replace `your-username/modelbench.git` with the actual repository URL.)*
 
-#### Step 2: Configure Your API Keys
+#### Step 2: Configure API Keys
 The application needs your secret API keys to communicate with the different LLM providers.
 
-1.  In the project folder, find the file named `.env.example`.
-2.  Make a copy of this file and rename the copy to `.env`.
-3.  Open the new `.env` file with a text editor.
-4.  Replace the placeholder values (`sk-...`) with your **actual API keys**.
+1.  Make a copy of the `.env.example` file and rename the copy to **`.env`**.
+2.  Open the new `.env` file with a text editor.
+3.  Replace the placeholder values with your **actual API keys**.
 
-#### Step 3: Build and Run the Application
-This step uses `docker-compose`, a tool that comes with Docker Desktop. It reads the `docker-compose.yml` file to automatically build the Docker container and run the application.
+#### Step 3: Build and Run with Docker
+This step uses `docker-compose` to automatically build the container and run the application.
 
-1.  Open your terminal and make sure you are in the project directory.
-2.  Run the following command:
+1.  From the project's root directory in your terminal, run:
     ```bash
     docker-compose up --build
     ```
-3.  **Be Patient!** The **first time** you run this, it will take several minutes. Docker is downloading the base Python image and all the large AI/ML libraries.
-4.  Wait until you see log messages from the application, ending with something like:
-    ```
-    [INFO] Uvicorn running on [http://0.0.0.0:8000](http://0.0.0.0:8000)
-    ```
-**Congratulations!** The ModelBench API is now running.
+2.  **Be Patient!** The first time you run this, it will take several minutes for Docker to download the base Python image and install all the large AI libraries.
+3.  Wait for the log message confirming the server is running: `[INFO] Uvicorn running on http://0.0.0.0:8000`.
 
 ---
 
-## ⚙️ Usage: Interacting with the API
+## ⚙️ API Usage
 
-Once the container is running, you can test it. Here are two common methods.
+Once the container is running, you can send requests to its endpoints.
 
-### Method 1: Direct API Call with `curl`
+### Endpoints
 
-`curl` is a command-line tool for making web requests. It's a great way to quickly test any API.
+#### `POST /compare`
+This is the main endpoint for comparing models.
 
-**Instructions:**
-1.  Make sure your Docker container is running.
-2.  Open a **new** terminal window.
-3.  Copy and paste the following command:
+**Request Body:**
+
+| Field             | Type          | Description                                                                    |
+| ----------------- | ------------- | ------------------------------------------------------------------------------ |
+| `prompt`          | `string`      | **Required.** The text prompt to send to the models.                           |
+| `models`          | `list[string]`| **Required.** A list of models to query. e.g., `["openai", "gemini"]`.         |
+| `reference_model` | `string`      | **Optional.** The model to use as a baseline for similarity scoring. Must be in the `models` list. |
+
+**Response Body:**
+The API returns a JSON object with a `results` key, which is a list of objects, each containing:
+
+| Field                     | Type          | Description                                       |
+| ------------------------- | ------------- | ------------------------------------------------- |
+| `model`                   | `string`      | The name of the model.                            |
+| `output`                  | `string`      | The text response from the model.                 |
+| `latency_ms`              | `integer`     | The API call latency in milliseconds.             |
+| `tokens_used`             | `integer`     | The total tokens used (if available).             |
+| `estimated_cost`          | `float`       | The estimated cost of the API call in USD.        |
+| `analysis`                | `object`      | An object containing the text analysis scores.    |
+| `similarity_to_reference` | `float`       | The cosine similarity score to the reference model. |
+
+### Example Request (`curl`)
+
+Open a **new** terminal window and use the following command to test the API.
 
 ```bash
 curl -X POST "http://localhost:8000/compare" \
@@ -94,64 +133,10 @@ curl -X POST "http://localhost:8000/compare" \
   "reference_model": "openai"
 }'
 ```
-This command sends a `POST` request to the `/compare` endpoint with your prompt and model choices. The raw JSON response will be printed directly to your terminal.
 
-### Method 2: Using the Python Test Script
+#### `GET /health`
+A simple health check endpoint to verify that the API is running.
 
-For a more reusable and user-friendly test, you can use this Python script.
-
-**Instructions:**
-
-1.  **Save the Script:** Create a new file on your computer named `test_modelbench.py` and save the following code into it.
-
-    ```python
-    import requests
-    import json
-
-    # The URL of your running ModelBench API
-    API_URL = "http://localhost:8000/compare"
-
-    # The data payload for the request
-    payload = {
-        "prompt": "What are the three most important features of the Python programming language? Explain each one briefly.",
-        "models": ["openai", "gemini"],
-        "reference_model": "openai"
-    }
-
-    def run_test():
-        """
-        Sends a test request to the ModelBench API and prints the results.
-        """
-        print(f"▶️  Sending request to {API_URL} for models: {payload['models']}")
-        try:
-            response = requests.post(API_URL, json=payload, timeout=120)
-            response.raise_for_status()
-            print("\n✅ Request successful! Here are the results:\n")
-            results = response.json().get("results", [])
-            for result in results:
-                print("─" * 40)
-                print(f"🤖 Model:      {result.get('model')}")
-                print(f"⏱️ Latency:    {result.get('latency_ms')} ms")
-                print(f"💰 Est. Cost:  ${result.get('estimated_cost'):.6f}" if result.get('estimated_cost') is not None else "💰 Est. Cost:  N/A")
-                print("\n📝 Output:")
-                print(result.get('output'))
-                print("─" * 40 + "\n")
-        except requests.exceptions.RequestException as e:
-            print(f"\n❌ An error occurred: {e}")
-            print("Please ensure the ModelBench Docker container is running.")
-
-    if __name__ == "__main__":
-        run_test()
-    ```
-
-2.  **Install the `requests` Library:** This script requires the `requests` library. If you don't have it installed on your local machine, open a terminal and run:
-    ```bash
-    pip install requests
-    ```
-
-3.  **Run the Test:** Make sure your Docker container is running, then execute the script from your terminal:
-    ```bash
-    python test_modelbench.py
-    ```
-
-The script will print a nicely formatted response from each model, making it easy to read and compare.
+```bash
+curl http://localhost:8000/health
+```
