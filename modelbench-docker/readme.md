@@ -16,13 +16,13 @@ ModelBench lets you input a prompt and see how different LLMs respond side-by-si
 | GPT-4 | OpenAI | ✅ |
 | Claude | Anthropic | ✅ |
 | Mistral | HuggingFace | ✅ |
-| LLaMA | Ollama | ✅ |
-| Gemini | Google AI | ⏳ planned |
+| LLaMA | Ollama | ⏳ planned |
+| Gemini | Google AI |  ✅ |
 
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/yourname/modelbench
+git clone https://github.com/suliman317/modelbench
 cd modelbench
 docker-compose up --build
 
