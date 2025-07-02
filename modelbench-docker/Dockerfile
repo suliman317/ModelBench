@@ -1,24 +1,24 @@
 # Dockerfile
-FROM python:3.11.9-slim-bookworm as builder
+FROM python:3.13.3-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
-RUN pip install poetry==1.8.2
-COPY pyproject.toml poetry.lock* /app/
-RUN poetry install --no-root --no-dev --no-cache
+# Install necessary system packages
+RUN apt-get update && apt-get install -y build-essential cmake
 
-FROM python:3.11.9-slim-bookworm as final
+# Copy the requirements file
+COPY requirements.txt .
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-WORKDIR /app
+# Install Python dependencies using pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --from=builder /app/.venv /.venv
-ENV PATH="/app/.venv/bin:$PATH"
-
+# Copy the application code
 COPY modelbench.py .
+
+# Expose the port
 EXPOSE 8000
 
+# Run the application
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "2", "modelbench:app", "--bind", "0.0.0.0:8000"]
