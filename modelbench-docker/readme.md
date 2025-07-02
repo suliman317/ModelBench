@@ -42,7 +42,7 @@ Follow these steps to get the ModelBench API running on your local machine.
 You can either download the project as a ZIP file or use `git` if you have it installed.
 
 ```bash
-git clone [https://github.com/your-username/modelbench.git](https://github.com/your-username/modelbench.git)
+git clone [https://github.com/suliman317/modelbench.git](https://github.com/your-username/modelbench.git)
 cd modelbench
 ```
 *(Note: Replace `your-username/modelbench.git` with the actual repository URL.)*
