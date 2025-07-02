@@ -1,0 +1,22 @@
+# pyproject.toml
+[tool.poetry]
+name = "modelbench"
+version = "2.0.0"
+description = "Multi-LLM Comparison and Analysis API"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+uvicorn = {extras = ["standard"], version = "^0.30.1"}
+gunicorn = "^22.0.0"
+httpx = "^0.27.0"
+pydantic-settings = "^2.3.4"
+loguru = "^0.7.2"
+slowapi = "^0.1.9"
+textstat = "^0.7.3"
+sentence-transformers = "^3.0.1"
+scikit-learn = "^1.5.0"
+detoxify = "^0.5.1"
+transformers = {version = "^4.42.3", extras = ["torch"]}
+torch = "^2.3.1"
