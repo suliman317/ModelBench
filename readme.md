@@ -1,5 +1,5 @@
 # 🧠 ModelBench – Compare the Simulated Mind
-# ModelBench ベンチ
+# ModelBench
 
 [![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Framework-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
